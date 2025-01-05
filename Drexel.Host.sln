@@ -5,13 +5,13 @@ VisualStudioVersion = 17.13.35617.110
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drexel.Host.Dns.Cloudflare", "src\Drexel.Host.Dns.Cloudflare\Drexel.Host.Dns.Cloudflare.csproj", "{B887A596-8CDF-496F-AEC7-691C5CA46406}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "​Solution Items", "​Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drexel.Host", "src\Drexel.Host\Drexel.Host.csproj", "{FF808BDB-F62F-4F07-9072-187D81814F8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,16 +19,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B887A596-8CDF-496F-AEC7-691C5CA46406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B887A596-8CDF-496F-AEC7-691C5CA46406}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B887A596-8CDF-496F-AEC7-691C5CA46406}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B887A596-8CDF-496F-AEC7-691C5CA46406}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF808BDB-F62F-4F07-9072-187D81814F8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF808BDB-F62F-4F07-9072-187D81814F8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF808BDB-F62F-4F07-9072-187D81814F8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF808BDB-F62F-4F07-9072-187D81814F8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B887A596-8CDF-496F-AEC7-691C5CA46406} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{FF808BDB-F62F-4F07-9072-187D81814F8F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2D3DCD42-7980-4D86-9750-ED02D8347ADC}
