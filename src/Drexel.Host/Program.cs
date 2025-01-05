@@ -1,6 +1,8 @@
 ﻿using System;
 using System.CommandLine;
+using System.CommandLine.Builder;
 using System.CommandLine.IO;
+using System.CommandLine.Parsing;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,10 +26,14 @@ namespace Drexel.Host
                 {
                     string? urlOptionValue = context.ParseResult.GetValueForOption(UrlOption);
                     CancellationToken token = context.GetCancellationToken();
+
                     context.ExitCode = await DoRootCommand(context.Console, urlOptionValue, token);
                 });
 
-            return await rootCommand.InvokeAsync(args);
+            Parser parser = new CommandLineBuilder(rootCommand)
+                .UseDefaults()
+                .Build();
+            return await parser.InvokeAsync(args);
         }
 
         public static async Task<int> DoRootCommand(
@@ -50,6 +56,11 @@ namespace Drexel.Host
             {
                 console.Error.WriteLine(e.Message);
                 return 1;
+            }
+            catch (Exception e)
+            {
+                console.Error.WriteLine(e.Message);
+                return 2;
             }
         }
     }
