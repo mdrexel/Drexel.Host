@@ -1,11 +1,11 @@
 ﻿using System;
 using System.CommandLine;
 using System.CommandLine.Builder;
-using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Spectre.Console;
 
 namespace Drexel.Host
 {
@@ -27,7 +27,7 @@ namespace Drexel.Host
                     string? urlOptionValue = context.ParseResult.GetValueForOption(UrlOption);
                     CancellationToken token = context.GetCancellationToken();
 
-                    context.ExitCode = await DoRootCommand(context.Console, urlOptionValue, token);
+                    context.ExitCode = await DoRootCommand(urlOptionValue, token);
                 });
 
             Parser parser = new CommandLineBuilder(rootCommand)
@@ -37,7 +37,6 @@ namespace Drexel.Host
         }
 
         public static async Task<int> DoRootCommand(
-            IConsole console,
             string? urlOptionValue,
             CancellationToken cancellationToken)
         {
@@ -48,18 +47,18 @@ namespace Drexel.Host
                 HttpResponseMessage response = await httpClient.GetAsync(urlOptionValue, cancellationToken);
                 string content = await response.Content.ReadAsStringAsync(cancellationToken);
 
-                console.WriteLine(content);
+                AnsiConsole.Console.WriteLine(content);
 
                 return 0;
             }
             catch (OperationCanceledException e)
             {
-                console.Error.WriteLine(e.Message);
+                AnsiConsole.Console.WriteException(e, ExceptionFormats.NoStackTrace);
                 return 1;
             }
             catch (Exception e)
             {
-                console.Error.WriteLine(e.Message);
+                AnsiConsole.Console.WriteException(e, ExceptionFormats.NoStackTrace);
                 return 2;
             }
         }
