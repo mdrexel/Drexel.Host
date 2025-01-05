@@ -6,8 +6,11 @@
     <OutputType>Exe</OutputType>
     <DebugType>embedded</DebugType>
 
-    <PublishAot>true</PublishAot>
     <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <SelfContained>true</SelfContained>
+    <IsTrimmable>true</IsTrimmable>
 
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
