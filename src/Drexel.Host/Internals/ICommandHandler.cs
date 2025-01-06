@@ -1,4 +1,5 @@
-﻿using System.CommandLine.Invocation;
+﻿using System;
+using System.CommandLine.Invocation;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace Drexel.Host.Internals
         /// <returns>
         /// An instance of the handler.
         /// </returns>
-        static virtual THandler Create(ServiceProvider serviceProvider)
+        static virtual THandler Create(IServiceProvider serviceProvider)
         {
             return ActivatorUtilities.CreateInstance<THandler>(serviceProvider);
         }

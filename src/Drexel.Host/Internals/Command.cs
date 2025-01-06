@@ -1,8 +1,8 @@
-﻿using System.CommandLine;
+﻿using System;
+using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Drexel.Host.Internals
 {
@@ -20,7 +20,7 @@ namespace Drexel.Host.Internals
         protected Command(string name, string description)
             : base(name, description)
         {
-            this.Handler = CommandHandler.Create<TOptions, ServiceProvider, CancellationToken>(
+            this.Handler = CommandHandler.Create<TOptions, IServiceProvider, CancellationToken>(
                 static async (options, serviceProvider, cancellationToken) =>
                 {
                     THandler handler = THandler.Create(serviceProvider);
