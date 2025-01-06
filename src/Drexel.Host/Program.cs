@@ -57,7 +57,7 @@ namespace Drexel.Host
                 AddOption(UriOption);
             }
 
-            public sealed class GetUriOptions(string uri) : ICommandOptions<GetUriOptions>
+            public sealed class GetUriOptions(string uri)
             {
                 public string Uri { get; } = uri;
             }
