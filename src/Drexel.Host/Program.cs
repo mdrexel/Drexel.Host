@@ -9,8 +9,20 @@ using Spectre.Console;
 
 namespace Drexel.Host
 {
+    /// <summary>
+    /// The host application.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// The entry point.
+        /// </summary>
+        /// <param name="args">
+        /// The arguments supplied as part of the command invocation.
+        /// </param>
+        /// <returns>
+        /// An exit code describing the state of the application.
+        /// </returns>
         public static async Task<int> Main(string[] args)
         {
             RootCommand rootCommand =
