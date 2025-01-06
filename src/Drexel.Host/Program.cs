@@ -1,10 +1,8 @@
-﻿using System;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
-using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
+using Drexel.Host.Commands.Uri;
 using Drexel.Host.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
@@ -16,12 +14,9 @@ namespace Drexel.Host
         public static async Task<int> Main(string[] args)
         {
             RootCommand rootCommand =
-                new("Max experimenting")
+                new("Max's server utilities")
                 {
-                    new Command("uri", "More experimenting")
-                    {
-                        new GetUriCommand(),
-                    },
+                    new UriRoot(),
                 };
 
             Parser parser = new CommandLineBuilder(rootCommand)
@@ -45,37 +40,6 @@ namespace Drexel.Host
                 .Build();
 
             return await parser.InvokeAsync(args);
-        }
-
-        private sealed class GetUriCommand : Command<GetUriCommand.GetUriOptions, GetUriCommand.GetUriHandler>
-        {
-            private static Option<string> UriOption { get; } = new("--uri", "A URI.");
-
-            public GetUriCommand()
-                : base("get", "Gets the URI")
-            {
-                AddOption(UriOption);
-            }
-
-            public sealed class GetUriOptions(string uri)
-            {
-                public string Uri { get; } = uri;
-            }
-
-            public sealed class GetUriHandler(IAnsiConsole console) : ICommandHandler<GetUriOptions, GetUriHandler>
-            {
-                public async Task<int> HandleAsync(GetUriOptions options, CancellationToken cancellationToken)
-                {
-                    using HttpClient httpClient = new();
-
-                    HttpResponseMessage response = await httpClient.GetAsync(options.Uri, cancellationToken);
-                    string content = await response.Content.ReadAsStringAsync(cancellationToken);
-
-                    console.WriteLine(content);
-
-                    return ExitCode.Success;
-                }
-            }
         }
     }
 }
