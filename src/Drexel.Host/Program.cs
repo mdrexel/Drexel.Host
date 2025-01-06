@@ -7,6 +7,7 @@ using System.CommandLine.Parsing;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Drexel.Host.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
 

@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace System.CommandLine.Builder
+namespace Drexel.Host.Internals
 {
     internal static class DependencyInjectionMiddleware
     {
