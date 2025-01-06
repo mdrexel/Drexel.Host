@@ -1,0 +1,12 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "src\\Drexel.Host\\Drexel.Host.csproj",
+        "Action": "Start",
+        "DebugTarget": "Drexel.Host"
+      }
+    ]
+  }
+]

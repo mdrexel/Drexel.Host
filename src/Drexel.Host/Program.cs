@@ -1,8 +1,6 @@
 ﻿using System;
 using System.CommandLine;
 using System.CommandLine.Builder;
-using System.CommandLine.Invocation;
-using System.CommandLine.NamingConventionBinder;
 using System.CommandLine.Parsing;
 using System.Net.Http;
 using System.Threading;
@@ -15,24 +13,16 @@ namespace Drexel.Host
 {
     public class Program
     {
-        private static Option<string> UrlOption { get; } = new("--url", "A URL.");
-
         public static async Task<int> Main(string[] args)
         {
             RootCommand rootCommand =
                 new("Max experimenting")
                 {
-                    UrlOption,
+                    new Command("uri", "More experimenting")
+                    {
+                        new GetUriCommand(),
+                    },
                 };
-
-            rootCommand.Handler = CommandHandler.Create<InvocationContext, IAnsiConsole>(
-                static async (context, console) =>
-                {
-                    string? urlOptionValue = context.ParseResult.GetValueForOption(UrlOption);
-                    CancellationToken token = context.GetCancellationToken();
-
-                    context.ExitCode = await DoRootCommand(console, urlOptionValue, token);
-                });
 
             Parser parser = new CommandLineBuilder(rootCommand)
                 .UseDefaults()
@@ -53,22 +43,37 @@ namespace Drexel.Host
                         services.AddSingleton(AnsiConsole.Console);
                     })
                 .Build();
+
             return await parser.InvokeAsync(args);
         }
 
-        public static async Task<int> DoRootCommand(
-            IAnsiConsole console,
-            string? urlOptionValue,
-            CancellationToken cancellationToken)
+        private sealed class GetUriCommand : Command<GetUriCommand.GetUriOptions, GetUriCommand.GetUriHandler>
         {
-            using HttpClient httpClient = new();
+            public GetUriCommand()
+                : base("get", "Gets the URI")
+            {
+                AddOption(new Option<string>("--uri", "A URI."));
+            }
 
-            HttpResponseMessage response = await httpClient.GetAsync(urlOptionValue, cancellationToken);
-            string content = await response.Content.ReadAsStringAsync(cancellationToken);
+            public sealed class GetUriOptions
+            {
+                public required string Uri { get; init; }
+            }
 
-            console.WriteLine(content);
+            public sealed class GetUriHandler(IAnsiConsole console) : ICommandHandler<GetUriOptions, GetUriHandler>
+            {
+                public async Task<int> HandleAsync(GetUriOptions options, CancellationToken cancellationToken)
+                {
+                    using HttpClient httpClient = new();
 
-            return ExitCode.Success;
+                    HttpResponseMessage response = await httpClient.GetAsync(options.Uri, cancellationToken);
+                    string content = await response.Content.ReadAsStringAsync(cancellationToken);
+
+                    console.WriteLine(content);
+
+                    return ExitCode.Success;
+                }
+            }
         }
     }
 }

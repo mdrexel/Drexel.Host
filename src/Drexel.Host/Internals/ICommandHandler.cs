@@ -1,4 +1,5 @@
 ﻿using System.CommandLine.Invocation;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,10 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Drexel.Host.Internals
 {
     /// <inheritdoc cref="ICommandHandler"/>
-    /// <typeparam name="T">
-    /// The type of object containing the command options associated with this handler.
+    /// <typeparam name="TOptions">
+    /// The type of options the command callback receives.
     /// </typeparam>
-    internal interface ICommandHandler<in T>
+    /// <typeparam name="THandler">
+    /// The type that implements the command callback.
+    /// </typeparam>
+    internal interface ICommandHandler<in TOptions, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] out THandler>
+        where THandler : ICommandHandler<TOptions, THandler>
     {
         /// <summary>
         /// Creates an instance of the handler.
@@ -20,7 +25,10 @@ namespace Drexel.Host.Internals
         /// <returns>
         /// An instance of the handler.
         /// </returns>
-        static abstract ICommandHandler<T> Create(ServiceProvider serviceProvider);
+        static virtual THandler Create(ServiceProvider serviceProvider)
+        {
+            return ActivatorUtilities.CreateInstance<THandler>(serviceProvider);
+        }
 
         /// <inheritdoc cref="ICommandHandler.InvokeAsync(InvocationContext)"/>
         /// <param name="options">
@@ -29,6 +37,6 @@ namespace Drexel.Host.Internals
         /// <param name="cancellationToken">
         /// The cancellation token to observe.
         /// </param>
-        Task<int> HandleAsync(T options, CancellationToken cancellationToken);
+        Task<int> HandleAsync(TOptions options, CancellationToken cancellationToken);
     }
 }

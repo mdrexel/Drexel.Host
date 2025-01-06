@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "uri get": {
+      "commandName": "Project",
+      "commandLineArgs": "uri get --uri https://api.ipify.org"
+    }
+  }
+}
