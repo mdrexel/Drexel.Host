@@ -13,7 +13,7 @@ namespace Drexel.Host.Internals
     /// <typeparam name="THandler">
     /// The type that implements the command callback.
     /// </typeparam>
-    internal abstract class Command<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TOptions, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler> : Command
+    internal abstract class Command<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] TOptions, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler> : Command
         where THandler : ICommandHandler<TOptions, THandler>
     {
         /// <inheritdoc cref="Command(string, string?)"/>
