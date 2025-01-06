@@ -9,6 +9,18 @@ namespace Drexel.Host.Internals
 {
     internal static class DependencyInjectionMiddleware
     {
+        /// <summary>
+        /// Configures the builder to use dependency injection when binding command handler parameters.
+        /// </summary>
+        /// <param name="builder">
+        /// The command line builder.
+        /// </param>
+        /// <param name="configureServices">
+        /// A callback that configures the services eligible for dependency injection.
+        /// </param>
+        /// <returns>
+        /// The command line builder.
+        /// </returns>
         public static CommandLineBuilder UseDependencyInjection(
             this CommandLineBuilder builder,
             Action<ServiceCollection> configureServices)
@@ -16,6 +28,7 @@ namespace Drexel.Host.Internals
             return builder.UseDependencyInjection((_, services) => configureServices.Invoke(services));
         }
 
+        /// <inheritdoc cref="UseDependencyInjection(CommandLineBuilder, Action{ServiceCollection})"/>
         public static CommandLineBuilder UseDependencyInjection(
             this CommandLineBuilder builder,
             Action<InvocationContext, ServiceCollection> configureServices)

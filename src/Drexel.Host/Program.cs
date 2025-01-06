@@ -34,15 +34,15 @@ namespace Drexel.Host
             Parser parser = new CommandLineBuilder(rootCommand)
                 .UseDefaults()
                 .UseExceptionHandler(
-                    (exception, context) =>
+                    (exception, _) =>
                     {
                         // TODO: `WriteException` writes to stdout, but `UseParseErrorReporting` writes directly to
                         // `stderr` (and also twiddles the console colors). Maybe we can inject an `IConsole` that
                         // forwards all the output to `AnsiConsole`? Or just ignore the issue since if we die due to
                         // being improperly invoked, we never spun up an `AnsiConsole`, so the lifetimes never overlap?
                         AnsiConsole.Console.WriteException(exception);
-                        context.ExitCode = ExitCode.UnspecifiedFailure;
-                    })
+                    },
+                    ExitCode.UnspecifiedFailure)
                 .UseParseErrorReporting(ExitCode.IncorrectInvocation)
                 .UseDependencyInjection(
                     services =>
