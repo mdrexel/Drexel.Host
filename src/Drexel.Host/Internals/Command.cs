@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.CommandLine.NamingConventionBinder;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -13,16 +14,18 @@ namespace Drexel.Host.Internals
     /// <typeparam name="THandler">
     /// The type that implements the command callback.
     /// </typeparam>
-    internal abstract class Command<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] TOptions, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler> : Command
+    internal abstract class Command<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TOptions, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler> : Command
+        where TOptions : ICommandOptions<TOptions>
         where THandler : ICommandHandler<TOptions, THandler>
     {
         /// <inheritdoc cref="Command(string, string?)"/>
         protected Command(string name, string description)
             : base(name, description)
         {
-            this.Handler = CommandHandler.Create<TOptions, IServiceProvider, CancellationToken>(
-                static async (options, serviceProvider, cancellationToken) =>
+            this.Handler = CommandHandler.Create</*InvocationContext, */ TOptions, IServiceProvider, CancellationToken>(
+                static async (/*context, */ options, serviceProvider, cancellationToken) =>
                 {
+                    ////TOptions options = TOptions.Create(context);
                     THandler handler = THandler.Create(serviceProvider);
                     return await handler.HandleAsync(options, cancellationToken);
                 });

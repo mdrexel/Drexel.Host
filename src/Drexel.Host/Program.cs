@@ -49,15 +49,17 @@ namespace Drexel.Host
 
         private sealed class GetUriCommand : Command<GetUriCommand.GetUriOptions, GetUriCommand.GetUriHandler>
         {
+            private static Option<string> UriOption { get; } = new("--uri", "A URI.");
+
             public GetUriCommand()
                 : base("get", "Gets the URI")
             {
-                AddOption(new Option<string>("--uri", "A URI."));
+                AddOption(UriOption);
             }
 
-            public sealed class GetUriOptions
+            public sealed class GetUriOptions(string uri) : ICommandOptions<GetUriOptions>
             {
-                public required string Uri { get; init; }
+                public string Uri { get; } = uri;
             }
 
             public sealed class GetUriHandler(IAnsiConsole console) : ICommandHandler<GetUriOptions, GetUriHandler>
