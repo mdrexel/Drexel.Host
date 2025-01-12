@@ -2,7 +2,7 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Threading.Tasks;
-using Drexel.Host.Commands.Uri;
+using Drexel.Host.Commands.Http;
 using Drexel.Host.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
@@ -28,7 +28,7 @@ namespace Drexel.Host
             RootCommand rootCommand =
                 new("Max's server utilities")
                 {
-                    new UriRoot(),
+                    new HttpRoot(),
                 };
 
             Parser parser = new CommandLineBuilder(rootCommand)

@@ -3,9 +3,9 @@
     "(No Parameters)": {
       "commandName": "Project"
     },
-    "uri get": {
+    "http send": {
       "commandName": "Project",
-      "commandLineArgs": "uri get --uri https://api.ipify.org"
+      "commandLineArgs": "http send --uri https://api.ipify.org --method GET --header foo bar --header baz qux --content 1234567890"
     }
   }
 }
