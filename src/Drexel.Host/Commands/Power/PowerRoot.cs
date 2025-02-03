@@ -12,7 +12,7 @@ namespace Drexel.Host.Commands.Power
         /// Initializes a new instance of the <see cref="PowerRoot"/> class.
         /// </summary>
         public PowerRoot()
-            : base("http", "Power-related actions.")
+            : base("power", "Power-related actions.")
         {
             this.Add(new PowerOffCommand());
         }

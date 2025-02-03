@@ -42,28 +42,36 @@ namespace Drexel.Host.Commands.Power.Off
 
                 if (OperatingSystem.IsWindows())
                 {
-                    return await ShutdownWindowsAsync();
+                    return await ShutdownWindowsAsync(options, cancellationToken);
                 }
                 else if (OperatingSystem.IsLinux())
                 {
-                    return await ShutdownLinuxAsync();
+                    return await ShutdownLinuxAsync(options, cancellationToken);
                 }
                 else
                 {
                     throw new PlatformNotSupportedException(
-                        "The current platform does not have a shutdown implementation defined.");
+                        "A power-off implementation has not been defined for this platform.");
                 }
             }
 
             [SupportedOSPlatform("windows")]
-            private static async Task<int> ShutdownWindowsAsync()
+            private static async Task<int> ShutdownWindowsAsync(
+                Options options,
+                CancellationToken cancellationToken)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 throw new NotImplementedException();
             }
 
             [SupportedOSPlatform("linux")]
-            private static async Task<int> ShutdownLinuxAsync()
+            private static async Task<int> ShutdownLinuxAsync(
+                Options options,
+                CancellationToken cancellationToken)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 throw new NotImplementedException();
             }
         }

@@ -6,6 +6,10 @@
     "http send": {
       "commandName": "Project",
       "commandLineArgs": "http send --uri https://api.ipify.org --method GET --header foo bar --header baz qux --content 1234567890"
+    },
+    "power off": {
+      "commandName": "Project",
+      "commandLineArgs": "power off"
     }
   }
 }

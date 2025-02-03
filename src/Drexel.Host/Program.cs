@@ -3,6 +3,7 @@ using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Threading.Tasks;
 using Drexel.Host.Commands.Http;
+using Drexel.Host.Commands.Power;
 using Drexel.Host.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
@@ -29,6 +30,7 @@ namespace Drexel.Host
                 new("Max's server utilities")
                 {
                     new HttpRoot(),
+                    new PowerRoot(),
                 };
 
             Parser parser = new CommandLineBuilder(rootCommand)
