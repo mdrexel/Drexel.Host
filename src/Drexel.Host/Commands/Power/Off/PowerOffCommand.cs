@@ -79,7 +79,7 @@ namespace Drexel.Host.Commands.Power.Off
             /// <summary>
             /// Gets a value indicating the reason for the power-off operation.
             /// </summary>
-            public Reason Reason { get; }
+            public Reason Reason { get; init; }
 
             /// <summary>
             /// Gets a value indicating whether the power-off operation should be forced.
@@ -87,7 +87,7 @@ namespace Drexel.Host.Commands.Power.Off
             /// <value>
             /// <see langword="true"/> if the operation should be forced; otherwise, <see langword="false"/>.
             /// </value>
-            public bool Force { get; }
+            public bool Force { get; init; }
 
             /// <summary>
             /// Gets a value indicating whether a simulation of the operation which has no side-effects should be
@@ -97,7 +97,7 @@ namespace Drexel.Host.Commands.Power.Off
             /// <see langword="true"/> if a simulation of the operation should be performed; otherwise,
             /// <see langword="false"/>.
             /// </value>
-            public bool WhatIf { get; }
+            public bool WhatIf { get; init; }
         }
 
         /// <summary>
