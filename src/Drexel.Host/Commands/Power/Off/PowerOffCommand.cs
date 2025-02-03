@@ -55,7 +55,20 @@ namespace Drexel.Host.Commands.Power.Off
             /// </summary>
             None,
 
+            /// <summary>
+            /// Indicates that the reason is a power failure.
+            /// </summary>
+            Power,
 
+            /// <summary>
+            /// Indicates that the reason is a software failure.
+            /// </summary>
+            Software,
+
+            /// <summary>
+            /// Indicates that the reason is a hardware failure.
+            /// </summary>
+            Hardware,
         }
 
         /// <summary>
@@ -141,6 +154,9 @@ namespace Drexel.Host.Commands.Power.Off
                     reason switch
                     {
                         Reason.None => SHUTDOWN_REASON.SHTDN_REASON_NONE,
+                        Reason.Power => SHUTDOWN_REASON.SHTDN_REASON_MAJOR_POWER,
+                        Reason.Software => SHUTDOWN_REASON.SHTDN_REASON_MAJOR_SOFTWARE,
+                        Reason.Hardware => SHUTDOWN_REASON.SHTDN_REASON_MAJOR_HARDWARE,
                         _ => throw new ArgumentException("Unrecognized power-off reason.", nameof(options)),
                     };
             }
