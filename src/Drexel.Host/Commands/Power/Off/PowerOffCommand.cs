@@ -6,11 +6,8 @@ using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Drexel.Host.Internals;
-using Microsoft.Win32.SafeHandles;
 using Spectre.Console;
 using Windows.Win32;
-using Windows.Win32.Foundation;
-using Windows.Win32.Security;
 using Windows.Win32.System.Shutdown;
 
 namespace Drexel.Host.Commands.Power.Off
@@ -197,11 +194,13 @@ namespace Drexel.Host.Commands.Power.Off
                     return 0;
                 }
 
-                // For whatever reason, Microsoft decided that zero means failed and non-zero means succeeded. We
-                // need to check what the actual error was.
-                return PInvoke.ExitWindowsEx(mode, reason) == 0
-                    ? Marshal.GetLastWin32Error()
-                    : 0;
+                if (!PInvoke.ExitWindowsEx(mode, reason))
+                {
+                    console.WriteException(
+                        new Exception(Marshal.GetLastPInvokeErrorMessage()),
+                        ExceptionFormats.NoStackTrace);
+                    return Marshal.GetLastPInvokeError();
+                }
 
                 static SHUTDOWN_REASON Convert(Reason reason) =>
                     reason switch
