@@ -9,7 +9,7 @@
     },
     "power off": {
       "commandName": "Project",
-      "commandLineArgs": "power off"
+      "commandLineArgs": "power off --what-if"
     }
   }
 }
