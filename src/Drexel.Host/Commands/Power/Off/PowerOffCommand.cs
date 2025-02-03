@@ -189,18 +189,18 @@ namespace Drexel.Host.Commands.Power.Off
                     return Marshal.GetLastPInvokeError();
                 }
 
-                if (options.WhatIf)
+                if (!options.WhatIf)
                 {
-                    return 0;
+                    if (!PInvoke.ExitWindowsEx(mode, reason))
+                    {
+                        console.WriteException(
+                            new Exception(Marshal.GetLastPInvokeErrorMessage()),
+                            ExceptionFormats.NoStackTrace);
+                        return Marshal.GetLastPInvokeError();
+                    }
                 }
 
-                if (!PInvoke.ExitWindowsEx(mode, reason))
-                {
-                    console.WriteException(
-                        new Exception(Marshal.GetLastPInvokeErrorMessage()),
-                        ExceptionFormats.NoStackTrace);
-                    return Marshal.GetLastPInvokeError();
-                }
+                return 0;
 
                 static SHUTDOWN_REASON Convert(Reason reason) =>
                     reason switch
