@@ -1,11 +1,16 @@
 ﻿using System;
 using System.CommandLine;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Drexel.Host.Internals;
+using Microsoft.Win32.SafeHandles;
 using Spectre.Console;
 using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.Security;
 using Windows.Win32.System.Shutdown;
 
 namespace Drexel.Host.Commands.Power.Off
@@ -129,7 +134,7 @@ namespace Drexel.Host.Commands.Power.Off
             }
 
             [SupportedOSPlatform("windows5.1.2600")]
-            private static async Task<int> ShutdownWindowsAsync(
+            private async Task<int> ShutdownWindowsAsync(
                 Options options,
                 CancellationToken cancellationToken)
             {
@@ -140,15 +145,63 @@ namespace Drexel.Host.Commands.Power.Off
                     : EXIT_WINDOWS_FLAGS.EWX_POWEROFF;
                 SHUTDOWN_REASON reason = Convert(options.Reason);
 
+                const short TOKEN_ADJUST_PRIVILEGES = 32;
+                const short TOKEN_QUERY = 8;
+                if (0 == OpenProcessToken(
+                    Process.GetCurrentProcess().Handle,
+                    TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+                    out IntPtr hToken))
+                {
+                    console.WriteException(
+                        new Exception(Marshal.GetLastPInvokeErrorMessage()),
+                        ExceptionFormats.NoStackTrace);
+                    return Marshal.GetLastPInvokeError();
+                }
+
+                if (0 == LookupPrivilegeValue("", "SeShutdownPrivilege", out LUID lpLuid))
+                {
+                    console.WriteException(
+                        new Exception(Marshal.GetLastPInvokeErrorMessage()),
+                        ExceptionFormats.NoStackTrace);
+                    return Marshal.GetLastPInvokeError();
+                }
+
+                const short SE_PRIVILEGE_ENABLED = 2;
+                TOKEN_PRIVILEGES tkp =
+                    new()
+                    {
+                        PrivilegeCount = 1,
+                        Privileges =
+                            {
+                                pLuid = lpLuid,
+                                Attributes = SE_PRIVILEGE_ENABLED,
+                            },
+                    };
+
+                if (!AdjustTokenPrivileges(
+                    hToken,
+                    false,
+                    ref tkp,
+                    0U,
+                    IntPtr.Zero,
+                    IntPtr.Zero))
+                {
+                    console.WriteException(
+                        new Exception(Marshal.GetLastPInvokeErrorMessage()),
+                        ExceptionFormats.NoStackTrace);
+                    return Marshal.GetLastPInvokeError();
+                }
+
                 if (options.WhatIf)
                 {
                     return 0;
                 }
-                else
-                {
-                    int result = PInvoke.ExitWindowsEx(mode, reason);
-                    return result;
-                }
+
+                // For whatever reason, Microsoft decided that zero means failed and non-zero means succeeded. We
+                // need to check what the actual error was.
+                return PInvoke.ExitWindowsEx(mode, reason) == 0
+                    ? Marshal.GetLastWin32Error()
+                    : 0;
 
                 static SHUTDOWN_REASON Convert(Reason reason) =>
                     reason switch
@@ -162,13 +215,47 @@ namespace Drexel.Host.Commands.Power.Off
             }
 
             [SupportedOSPlatform("linux")]
-            private static async Task<int> ShutdownLinuxAsync(
+            private async Task<int> ShutdownLinuxAsync(
                 Options options,
                 CancellationToken cancellationToken)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 throw new NotImplementedException();
+            }
+
+            [DllImport("advapi32.dll")]
+            static extern int OpenProcessToken(IntPtr ProcessHandle, int DesiredAccess, out IntPtr TokenHandle);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            static extern bool AdjustTokenPrivileges(
+                IntPtr TokenHandle,
+                [MarshalAs(UnmanagedType.Bool)] bool DisableAllPrivileges,
+                ref TOKEN_PRIVILEGES NewState,
+                UInt32 BufferLength,
+                IntPtr PreviousState,
+                IntPtr ReturnLength);
+
+            [DllImport("advapi32.dll")]
+            static extern int LookupPrivilegeValue(string lpSystemName, string lpName, out LUID lpLuid);
+
+            private struct LUID
+            {
+                public int LowPart;
+                public int HighPart;
+            }
+
+            private struct LUID_AND_ATTRIBUTES
+            {
+                public LUID pLuid;
+                public int Attributes;
+            }
+
+            private struct TOKEN_PRIVILEGES
+            {
+                public int PrivilegeCount;
+                public LUID_AND_ATTRIBUTES Privileges;
             }
         }
     }
