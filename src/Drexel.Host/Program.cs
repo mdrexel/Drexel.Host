@@ -2,6 +2,7 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Threading.Tasks;
+using Drexel.Host.Commands.Gpio;
 using Drexel.Host.Commands.Http;
 using Drexel.Host.Commands.Power;
 using Drexel.Host.Internals;
@@ -31,6 +32,7 @@ namespace Drexel.Host
                 {
                     new HttpRoot(),
                     new PowerRoot(),
+                    new GpioRoot(),
                 };
 
             Parser parser = new CommandLineBuilder(rootCommand)
