@@ -47,8 +47,9 @@ namespace Drexel.Host.Commands.Gpio.Get
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                GpioController controller = new();
-                PinValue value = controller.Read(12);
+                using GpioController controller = new();
+                GpioPin pin = controller.OpenPin(12, PinMode.InputPullDown);
+                PinValue value = pin.Read();
                 console.WriteLine(((int)value).ToString());
 
                 return ExitCode.Success;
