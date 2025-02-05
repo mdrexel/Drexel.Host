@@ -14,7 +14,7 @@ namespace Drexel.Host
     /// <summary>
     /// The host application.
     /// </summary>
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// The entry point.
