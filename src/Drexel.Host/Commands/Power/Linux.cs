@@ -40,7 +40,7 @@ namespace Drexel.Host.Commands.Power
             }
         }
 
-        [DllImport("libc.so", SetLastError = true)]
+        [DllImport("libc.so.6", SetLastError = true)]
         public static extern Int32 reboot(Int32 cmd, IntPtr arg);
 
         public const Int32 LINUX_REBOOT_CMD_RESTART = 0x01234567;
