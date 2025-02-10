@@ -10,6 +10,10 @@
     "power off": {
       "commandName": "Project",
       "commandLineArgs": "power off --reason power"
+    },
+    "power cycle": {
+      "commandName": "Project",
+      "commandLineArgs": "power cycle --reason power"
     }
   }
 }
