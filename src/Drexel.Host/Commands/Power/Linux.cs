@@ -41,7 +41,7 @@ namespace Drexel.Host.Commands.Power
                 return 0;
             }
 
-            return RebootImpl(cmd);
+            return Reboot2Impl(cmd);
         }
 
         public enum RebootCommand
@@ -56,8 +56,23 @@ namespace Drexel.Host.Commands.Power
             ExecuteKernel
         }
 
+        private int Reboot2Impl(int cmd)
+        {
+            system("reboot now");
+        }
+
         private int RebootImpl(int cmd)
         {
+            // Ancient superstition says to force sync before rebooting. I found a couple blog-posts saying this is no
+            // longer necessary on newer Linux kernel versions, which will perform any necessary `sync`ing themselves,
+            // but out of an abundance of caution I've included it anyway.
+            sync();
+            Thread.Sleep(1000);
+            sync();
+            Thread.Sleep(1000);
+            sync();
+            Thread.Sleep(1000);
+
             int result = reboot(cmd, IntPtr.Zero);
             if (result != -1)
             {
@@ -111,6 +126,9 @@ namespace Drexel.Host.Commands.Power
 
         [DllImport("libc.so.6", SetLastError = true)]
         public static extern int reboot(int cmd, nint arg);
+
+        [DllImport("libc.so.6", SetLastError = true)]
+        public static extern void sync();
 
         [DllImport("libc.so.6", SetLastError = true)]
         public static extern int system(string command);
