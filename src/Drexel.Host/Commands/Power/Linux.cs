@@ -18,13 +18,15 @@ namespace Drexel.Host.Commands.Power
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            int cmd = Convert(RebootCommand.PowerOff);
+            string command = force
+                ? "systemctl poweroff --force"
+                : "systemctl poweroff";
             if (whatIf)
             {
                 return 0;
             }
 
-            return RebootImpl(cmd);
+            return system(command);
         }
 
         public async Task<int> RebootAsync(
@@ -35,100 +37,16 @@ namespace Drexel.Host.Commands.Power
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            int cmd = Convert(RebootCommand.Restart);
+            string command = force
+                ? "systemctl reboot --force"
+                : "systemctl reboot";
             if (whatIf)
             {
                 return 0;
             }
 
-            return Reboot2Impl(cmd);
+            return system(command);
         }
-
-        public enum RebootCommand
-        {
-            Restart,
-            Halt,
-            ControlAltDeleteEnable,
-            ControlAltDeleteDisable,
-            PowerOff,
-            RestartWithCommand,
-            Suspend,
-            ExecuteKernel
-        }
-
-        private int Reboot2Impl(int cmd)
-        {
-            system("reboot now");
-        }
-
-        private int RebootImpl(int cmd)
-        {
-            // Ancient superstition says to force sync before rebooting. I found a couple blog-posts saying this is no
-            // longer necessary on newer Linux kernel versions, which will perform any necessary `sync`ing themselves,
-            // but out of an abundance of caution I've included it anyway.
-            sync();
-            Thread.Sleep(1000);
-            sync();
-            Thread.Sleep(1000);
-            sync();
-            Thread.Sleep(1000);
-
-            int result = reboot(cmd, IntPtr.Zero);
-            if (result != -1)
-            {
-                console.WriteException(
-                    new Exception("Unexpected return code."),
-                    ExceptionFormats.NoStackTrace);
-                return result;
-            }
-
-            const int EPERM = 1;
-            const int EFAULT = 14;
-            const int EINVAL = 22;
-            result = Marshal.GetLastWin32Error();
-            switch (result)
-            {
-                case EPERM:
-                    throw new UnauthorizedAccessException("Don't have permissions to invoke `reboot` syscall wrapper.");
-                case EINVAL:
-                    throw new InvalidOperationException("Bad input values.");
-                case EFAULT:
-                default:
-                    throw new InvalidOperationException("Could not invoke `reboot` syscall wrapper:" + result.ToString());
-            }
-        }
-
-        private static int Convert(RebootCommand mode)
-        {
-            const int LINUX_REBOOT_CMD_RESTART = 0x01234567;
-            const int LINUX_REBOOT_CMD_HALT = unchecked((int)0xCDEF0123);
-            const int LINUX_REBOOT_CMD_CAD_ON = unchecked((int)0x89ABCDEF);
-            const int LINUX_REBOOT_CMD_CAD_OFF = 0x00000000;
-            const int LINUX_REBOOT_CMD_POWER_OFF = 0x4321FEDC;
-            const int LINUX_REBOOT_CMD_RESTART2 = unchecked((int)0xA1B2C3D4);
-            const int LINUX_REBOOT_CMD_SW_SUSPEND = unchecked((int)0xD000FCE2);
-            const int LINUX_REBOOT_CMD_KEXEC = 0x45584543;
-
-            return
-                mode switch
-                {
-                    RebootCommand.ControlAltDeleteDisable => LINUX_REBOOT_CMD_CAD_OFF,
-                    RebootCommand.ControlAltDeleteEnable => LINUX_REBOOT_CMD_CAD_ON,
-                    RebootCommand.ExecuteKernel => LINUX_REBOOT_CMD_KEXEC,
-                    RebootCommand.Halt => LINUX_REBOOT_CMD_HALT,
-                    RebootCommand.PowerOff => LINUX_REBOOT_CMD_POWER_OFF,
-                    RebootCommand.Restart => LINUX_REBOOT_CMD_RESTART,
-                    RebootCommand.RestartWithCommand => LINUX_REBOOT_CMD_RESTART2,
-                    RebootCommand.Suspend => LINUX_REBOOT_CMD_SW_SUSPEND,
-                    _ => throw new InvalidOperationException("Unrecognized mode."),
-                };
-        }
-
-        [DllImport("libc.so.6", SetLastError = true)]
-        public static extern int reboot(int cmd, nint arg);
-
-        [DllImport("libc.so.6", SetLastError = true)]
-        public static extern void sync();
 
         [DllImport("libc.so.6", SetLastError = true)]
         public static extern int system(string command);
