@@ -15,6 +15,7 @@ namespace Drexel.Host.Commands.Power
             : base("power", "Power-related actions.")
         {
             this.Add(new PowerOffCommand());
+            this.Add(new PowerCycleCommand());
         }
     }
 }

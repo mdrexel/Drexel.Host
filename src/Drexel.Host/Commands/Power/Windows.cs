@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
+using Spectre.Console;
 using Windows.Win32;
 using Windows.Win32.System.Shutdown;
-using Drexel.Host.Commands.Power.Off;
-using Spectre.Console;
 
 namespace Drexel.Host.Commands.Power
 {
+    [SupportedOSPlatform("windows")]
     internal sealed class Windows(IAnsiConsole console)
     {
         [SupportedOSPlatform("windows5.1.2600")]
@@ -20,11 +20,37 @@ namespace Drexel.Host.Commands.Power
             bool whatIf,
             CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             EXIT_WINDOWS_FLAGS mode = force
                 ? EXIT_WINDOWS_FLAGS.EWX_POWEROFF | EXIT_WINDOWS_FLAGS.EWX_FORCE
                 : EXIT_WINDOWS_FLAGS.EWX_POWEROFF;
+
+            return await ExitWindowsExImpl(mode, reason, force, whatIf, cancellationToken);
+        }
+
+        [SupportedOSPlatform("windows5.1.2600")]
+        public async Task<int> RebootAsync(
+            PowerOffReason reason,
+            bool force,
+            bool whatIf,
+            CancellationToken cancellationToken)
+        {
+            EXIT_WINDOWS_FLAGS mode = force
+                ? EXIT_WINDOWS_FLAGS.EWX_REBOOT | EXIT_WINDOWS_FLAGS.EWX_FORCE
+                : EXIT_WINDOWS_FLAGS.EWX_REBOOT;
+
+            return await ExitWindowsExImpl(mode, reason, force, whatIf, cancellationToken);
+        }
+
+        [SupportedOSPlatform("windows5.1.2600")]
+        private async Task<int> ExitWindowsExImpl(
+            EXIT_WINDOWS_FLAGS mode,
+            PowerOffReason reason,
+            bool force,
+            bool whatIf,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
             SHUTDOWN_REASON win32Reason = Convert(reason);
 
             const short TOKEN_ADJUST_PRIVILEGES = 32;
@@ -99,17 +125,17 @@ namespace Drexel.Host.Commands.Power
         }
 
         [DllImport("advapi32.dll")]
-        private static extern int OpenProcessToken(IntPtr ProcessHandle, int DesiredAccess, out IntPtr TokenHandle);
+        private static extern int OpenProcessToken(nint ProcessHandle, int DesiredAccess, out nint TokenHandle);
 
         [DllImport("advapi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool AdjustTokenPrivileges(
-            IntPtr TokenHandle,
+            nint TokenHandle,
             [MarshalAs(UnmanagedType.Bool)] bool DisableAllPrivileges,
             ref TOKEN_PRIVILEGES NewState,
-            UInt32 BufferLength,
-            IntPtr PreviousState,
-            IntPtr ReturnLength);
+            uint BufferLength,
+            nint PreviousState,
+            nint ReturnLength);
 
         [DllImport("advapi32.dll")]
         private static extern int LookupPrivilegeValue(string lpSystemName, string lpName, out LUID lpLuid);
