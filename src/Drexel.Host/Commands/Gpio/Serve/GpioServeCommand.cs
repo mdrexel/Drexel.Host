@@ -1,39 +1,31 @@
 ﻿using System;
-using System.CommandLine;
+using System.Collections.Generic;
 using System.Device.Gpio;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Drexel.Host.Internals;
 using Spectre.Console;
 
-namespace Drexel.Host.Commands.Gpio.Get
+namespace Drexel.Host.Commands.Gpio.Serve
 {
-    /// <summary>
-    /// Gets the value of a given pin.
-    /// </summary>
-    internal sealed class GpioGetCommand : Command<GpioGetCommand.Options, GpioGetCommand.Handler>
+    internal sealed class GpioServeCommand : Command<GpioServeCommand.Options, GpioServeCommand.Handler>
     {
-        private static Option<int> PinOption { get; } =
-            new(["--pin", "-p"], "The numeric pin number to get the value of.")
-            {
-                Arity = ArgumentArity.ExactlyOne,
-                IsRequired = true,
-            };
-
-        private static Option<PinReadMode> ModeOption { get; } =
-            new(["--mode", "-m"], () => PinReadMode.Default, "The mode to use when reading the value of the pin.")
-            {
-                Arity = ArgumentArity.ExactlyOne,
-            };
+        // MAX TODO: What's the right abstraction for hosting the pin state? Because we want debounce logic and
+        // ignore-if-says-no-power-during-bringup stuff; does that get baked into the consumer rather than the host? We
+        // just serve raw GPIO pin values, and it's up to the logic on the client-side to decide how to handle them?
+        // Reason that could matter is for BSD, since I dont know if we'll be able to run C# there yet (and so I'd have
+        // to do crappy bash stuff)
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GpioGetCommand"/> class.
+        /// Initializes a new instance of the <see cref="GpioServeCommand"/> class.
         /// </summary>
-        public GpioGetCommand()
-            : base("get", "Reads from a GPIO pin.")
+        public GpioServeCommand()
+            : base("serve", "Starts an HTTP server for interacting with GPIO pins.")
         {
-            Add(PinOption);
-            Add(ModeOption);
+            ////Add(PinOption);
+            ////Add(ModeOption);
         }
 
         /// <summary>

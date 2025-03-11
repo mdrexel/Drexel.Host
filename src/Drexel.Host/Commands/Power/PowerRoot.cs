@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using Drexel.Host.Commands.Power.Cycle;
 using Drexel.Host.Commands.Power.Off;
 
 namespace Drexel.Host.Commands.Power

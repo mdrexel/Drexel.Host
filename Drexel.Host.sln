@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EF6C5FAD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drexel.Host.Tests.Web", "tests\Drexel.Host.Tests.Web\Drexel.Host.Tests.Web.csproj", "{7C6E8E47-832D-417C-8019-2E9ADBFECDE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drexel.Host.Tests", "tests\Drexel.Host.Tests\Drexel.Host.Tests.csproj", "{B77ED4EB-743C-4915-87BF-D5196AA0E46C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{7C6E8E47-832D-417C-8019-2E9ADBFECDE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C6E8E47-832D-417C-8019-2E9ADBFECDE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C6E8E47-832D-417C-8019-2E9ADBFECDE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B77ED4EB-743C-4915-87BF-D5196AA0E46C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B77ED4EB-743C-4915-87BF-D5196AA0E46C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B77ED4EB-743C-4915-87BF-D5196AA0E46C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B77ED4EB-743C-4915-87BF-D5196AA0E46C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,6 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{FF808BDB-F62F-4F07-9072-187D81814F8F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{7C6E8E47-832D-417C-8019-2E9ADBFECDE1} = {EF6C5FAD-5EE1-4817-AA19-1A9D5D516CA1}
+		{B77ED4EB-743C-4915-87BF-D5196AA0E46C} = {EF6C5FAD-5EE1-4817-AA19-1A9D5D516CA1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2D3DCD42-7980-4D86-9750-ED02D8347ADC}

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Drexel.Host.Internals;
 using Spectre.Console;
 
-namespace Drexel.Host.Commands.Power.Off
+namespace Drexel.Host.Commands.Power.Cycle
 {
     /// <summary>
     /// Performs a power-cycle operation.
