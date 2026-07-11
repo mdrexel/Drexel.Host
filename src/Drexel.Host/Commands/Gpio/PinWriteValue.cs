@@ -18,7 +18,7 @@ internal static class PinWriteValueExtensions
             {
                 PinWriteValue.High => PinWriteValue.Low,
                 PinWriteValue.Low => PinWriteValue.High,
-                _ => throw new InvalidOperationException("Unrecognized pin write value.");
+                _ => throw new InvalidOperationException("Unrecognized pin write value."),
             };
 
         public PinValue ToPinValue() =>
