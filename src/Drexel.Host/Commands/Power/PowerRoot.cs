@@ -2,21 +2,20 @@
 using Drexel.Host.Commands.Power.Cycle;
 using Drexel.Host.Commands.Power.Off;
 
-namespace Drexel.Host.Commands.Power
+namespace Drexel.Host.Commands.Power;
+
+/// <summary>
+/// The <c>power</c> command root.
+/// </summary>
+public sealed class PowerRoot : Command
 {
     /// <summary>
-    /// The <c>power</c> command root.
+    /// Initializes a new instance of the <see cref="PowerRoot"/> class.
     /// </summary>
-    public sealed class PowerRoot : Command
+    public PowerRoot()
+        : base("power", "Power-related actions.")
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PowerRoot"/> class.
-        /// </summary>
-        public PowerRoot()
-            : base("power", "Power-related actions.")
-        {
-            this.Add(new PowerOffCommand());
-            this.Add(new PowerCycleCommand());
-        }
+        this.Add(new PowerOffCommand());
+        this.Add(new PowerCycleCommand());
     }
 }

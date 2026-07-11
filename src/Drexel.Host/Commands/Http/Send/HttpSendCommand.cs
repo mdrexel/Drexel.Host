@@ -7,105 +7,104 @@ using System.Threading.Tasks;
 using Drexel.Host.Internals;
 using Spectre.Console;
 
-namespace Drexel.Host.Commands.Http.Send
+namespace Drexel.Host.Commands.Http.Send;
+
+/// <summary>
+/// Performs an HTTP request against a specified URI.
+/// </summary>
+internal sealed class HttpSendCommand : Command<HttpSendCommand.Options, HttpSendCommand.Handler>
 {
+    private static Option<string> UriOption { get; } =
+        new(["--uri", "-u"], "The URI the HTTP request should be sent to.")
+        {
+            Arity = ArgumentArity.ExactlyOne,
+            IsRequired = true,
+        };
+
+    private static Option<string> MethodOption { get; } =
+        new(["--method", "-m"], () => "GET", "The HTTP method to use.");
+
+    private static Option<string[]> HeaderOption { get; } =
+        new(["--header", "-h"], "A header name followed by its value.")
+        {
+            AllowMultipleArgumentsPerToken = true,
+            Arity = new ArgumentArity(2, 2),
+        };
+
+    private static Option<string> ContentOption { get; } =
+        new(["--content", "-c"], "The content associated with the request.");
+
     /// <summary>
-    /// Performs an HTTP request against a specified URI.
+    /// Initializes a new instance of the <see cref="HttpSendCommand"/> class.
     /// </summary>
-    internal sealed class HttpSendCommand : Command<HttpSendCommand.Options, HttpSendCommand.Handler>
+    public HttpSendCommand()
+        : base("send", "Sends an outbound HTTP request.")
     {
-        private static Option<string> UriOption { get; } =
-            new(["--uri", "-u"], "The URI the HTTP request should be sent to.")
-            {
-                Arity = ArgumentArity.ExactlyOne,
-                IsRequired = true,
-            };
+        AddOption(UriOption);
+        AddOption(MethodOption);
+        AddOption(HeaderOption);
+        AddOption(ContentOption);
+    }
 
-        private static Option<string> MethodOption { get; } =
-            new(["--method", "-m"], () => "GET", "The HTTP method to use.");
-
-        private static Option<string[]> HeaderOption { get; } =
-            new(["--header", "-h"], "A header name followed by its value.")
-            {
-                AllowMultipleArgumentsPerToken = true,
-                Arity = new ArgumentArity(2, 2),
-            };
-
-        private static Option<string> ContentOption { get; } =
-            new(["--content", "-c"], "The content associated with the request.");
+    /// <summary>
+    /// The options associated with performing the command.
+    /// </summary>
+    public new sealed class Options
+    {
+        /// <summary>
+        /// Gets the URI to use.
+        /// </summary>
+        public required string Uri { get; init; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HttpSendCommand"/> class.
+        /// Gets the method to use.
         /// </summary>
-        public HttpSendCommand()
-            : base("send", "Sends an outbound HTTP request.")
-        {
-            AddOption(UriOption);
-            AddOption(MethodOption);
-            AddOption(HeaderOption);
-            AddOption(ContentOption);
-        }
+        public required string Method { get; init; }
 
         /// <summary>
-        /// The options associated with performing the command.
+        /// Gets the headers to include.
         /// </summary>
-        public new sealed class Options
-        {
-            /// <summary>
-            /// Gets the URI to use.
-            /// </summary>
-            public required string Uri { get; init; }
-
-            /// <summary>
-            /// Gets the method to use.
-            /// </summary>
-            public required string Method { get; init; }
-
-            /// <summary>
-            /// Gets the headers to include.
-            /// </summary>
-            public IReadOnlyDictionary<string, IReadOnlyList<string>>? Header { get; init; }
-
-            /// <summary>
-            /// Gets the content to include.
-            /// </summary>
-            public string? Content { get; init; }
-        }
+        public IReadOnlyDictionary<string, IReadOnlyList<string>>? Header { get; init; }
 
         /// <summary>
-        /// The command implementation.
+        /// Gets the content to include.
         /// </summary>
-        /// <param name="console">
-        /// The console to use.
-        /// </param>
-        public new sealed class Handler(IAnsiConsole console) : ICommandHandler<Options, Handler>
+        public string? Content { get; init; }
+    }
+
+    /// <summary>
+    /// The command implementation.
+    /// </summary>
+    /// <param name="console">
+    /// The console to use.
+    /// </param>
+    public new sealed class Handler(IAnsiConsole console) : ICommandHandler<Options, Handler>
+    {
+        /// <inheritdoc/>
+        public async Task<int> HandleAsync(Options options, CancellationToken cancellationToken)
         {
-            /// <inheritdoc/>
-            public async Task<int> HandleAsync(Options options, CancellationToken cancellationToken)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
 
-                using HttpClient httpClient = new();
+            using HttpClient httpClient = new();
 
-                HttpContent? content = options.Content is null ? null : new StringContent(options.Content);
+            HttpContent? content = options.Content is null ? null : new StringContent(options.Content);
 
-                HttpRequestMessage request =
-                    new(new(options.Method), options.Uri)
-                    {
-                        Content = content,
-                    };
-                foreach (KeyValuePair<string, IReadOnlyList<string>> header in options.Header?.AsEnumerable() ?? [])
+            HttpRequestMessage request =
+                new(new(options.Method), options.Uri)
                 {
-                    request.Headers.Add(header.Key, header.Value);
-                }
-
-                HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-                string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-
-                console.WriteLine(responseContent);
-
-                return ExitCode.Success;
+                    Content = content,
+                };
+            foreach (KeyValuePair<string, IReadOnlyList<string>> header in options.Header?.AsEnumerable() ?? [])
+            {
+                request.Headers.Add(header.Key, header.Value);
             }
+
+            HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            console.WriteLine(responseContent);
+
+            return ExitCode.Success;
         }
     }
 }
