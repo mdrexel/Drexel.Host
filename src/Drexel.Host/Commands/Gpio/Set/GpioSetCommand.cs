@@ -30,7 +30,7 @@ internal sealed class GpioSetCommand : Command<GpioSetCommand.Options, GpioSetCo
     /// Initializes a new instance of the <see cref="GpioSetCommand"/> class.
     /// </summary>
     public GpioSetCommand()
-        : base("get", "Writes to a GPIO pin.")
+        : base("set", "Writes to a GPIO pin.")
     {
         Add(PinOption);
         AddOption(ValueOption);
