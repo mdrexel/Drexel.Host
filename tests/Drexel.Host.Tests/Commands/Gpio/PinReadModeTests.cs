@@ -62,7 +62,7 @@ internal sealed class PinReadModeTests
         Assert.AreEqual(PinReadMode.Default, instance);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(EqualsCases))]
     public void Equals_AreEqual_ReturnsTrue(PinReadMode left, PinReadMode right)
     {
@@ -71,7 +71,7 @@ internal sealed class PinReadModeTests
         Assert.IsTrue(actual);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(NotEqualsCases))]
     public void Equals_AreNotEqual_ReturnsFalse(PinReadMode left, PinReadMode right)
     {
@@ -80,7 +80,7 @@ internal sealed class PinReadModeTests
         Assert.IsFalse(actual);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(EqualsObjectCases))]
     public void Equals_Object_AreEqual_ReturnsTrue(PinReadMode left, object? right)
     {
@@ -89,7 +89,7 @@ internal sealed class PinReadModeTests
         Assert.IsTrue(actual);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(NotEqualsObjectCases))]
     public void Equals_Object_AreNotEqual_ReturnsFalse(PinReadMode left, object? right)
     {
@@ -98,7 +98,7 @@ internal sealed class PinReadModeTests
         Assert.IsFalse(actual);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(EqualsCases))]
     public void GetHashCode_AreEqual_Succeeds(PinReadMode left, PinReadMode right)
     {
@@ -108,7 +108,7 @@ internal sealed class PinReadModeTests
         Assert.AreEqual(leftHash, rightHash);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(OperatorEqualsCases))]
     public void Operator_Equals_AreEqual_ReturnsTrue(PinReadMode left, PinReadMode right)
     {
@@ -116,7 +116,7 @@ internal sealed class PinReadModeTests
         Assert.IsTrue(right == left);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(OperatorNotEqualsCases))]
     public void Operator_Equals_AreNotEqual_ReturnsFalse(PinReadMode left, PinReadMode right)
     {
@@ -124,7 +124,7 @@ internal sealed class PinReadModeTests
         Assert.IsFalse(right == left);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(OperatorEqualsCases))]
     public void Operator_NotEquals_AreEqual_ReturnsFalse(PinReadMode left, PinReadMode right)
     {
@@ -132,7 +132,7 @@ internal sealed class PinReadModeTests
         Assert.IsFalse(right != left);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(OperatorNotEqualsCases))]
     public void Operator_NotEquals_AreNotEqual_ReturnsFalse(PinReadMode left, PinReadMode right)
     {
@@ -140,7 +140,7 @@ internal sealed class PinReadModeTests
         Assert.IsTrue(right != left);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(ToPinModeCases))]
     public void ToPinMode_Succeeds(PinReadMode instance, PinMode expected)
     {

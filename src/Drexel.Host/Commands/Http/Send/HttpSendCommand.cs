@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.CommandLine;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using Spectre.Console;
 namespace Drexel.Host.Commands.Http.Send
 {
     /// <summary>
-    /// Performs an HTTP <c>GET</c> request against a specified URI.
+    /// Performs an HTTP request against a specified URI.
     /// </summary>
     internal sealed class HttpSendCommand : Command<HttpSendCommand.Options, HttpSendCommand.Handler>
     {
@@ -17,6 +18,7 @@ namespace Drexel.Host.Commands.Http.Send
             new(["--uri", "-u"], "The URI the HTTP request should be sent to.")
             {
                 Arity = ArgumentArity.ExactlyOne,
+                IsRequired = true,
             };
 
         private static Option<string> MethodOption { get; } =
@@ -25,6 +27,7 @@ namespace Drexel.Host.Commands.Http.Send
         private static Option<string[]> HeaderOption { get; } =
             new(["--header", "-h"], "A header name followed by its value.")
             {
+                AllowMultipleArgumentsPerToken = true,
                 Arity = new ArgumentArity(2, 2),
             };
 
@@ -91,8 +94,12 @@ namespace Drexel.Host.Commands.Http.Send
                     {
                         Content = content,
                     };
+                foreach (KeyValuePair<string, IReadOnlyList<string>> header in options.Header?.AsEnumerable() ?? [])
+                {
+                    request.Headers.Add(header.Key, header.Value);
+                }
 
-                HttpResponseMessage response = await httpClient.GetAsync(options.Uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+                HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                 string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 console.WriteLine(responseContent);
