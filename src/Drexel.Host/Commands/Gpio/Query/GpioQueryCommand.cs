@@ -43,6 +43,9 @@ internal sealed class GpioQueryCommand : Command<GpioQueryCommand.Options, GpioQ
 
             using GpioController controller = new();
 
+            // TODO: this doesn't work because the underlying `RaspberryPi3Driver` tries to call `GetChipInfo` on the
+            // underlying driver when populating the component properties, but `RaspberryPi3LinuxDriver` doesn't override
+            // the base implementation that throws `NotImplementedException`, causing the entire call to fail
             ComponentInformation root = controller.QueryComponentInformation();
             console.WriteLine(root);
 
