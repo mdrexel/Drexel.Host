@@ -66,8 +66,7 @@ internal sealed class GpioSetCommand : Command<GpioSetCommand.Options, GpioSetCo
             cancellationToken.ThrowIfCancellationRequested();
 
             using GpioController controller = new();
-
-            GpioPin pin = controller.OpenPin(options.Pin, PinMode.Output);
+            using GpioPin pin = controller.OpenPin(options.Pin, PinMode.Output);
             PinValue value = options.Value.ToPinValue();
             pin.Write(value);
 
