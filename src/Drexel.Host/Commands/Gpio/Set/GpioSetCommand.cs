@@ -26,6 +26,12 @@ internal sealed class GpioSetCommand : Command<GpioSetCommand.Options, GpioSetCo
             IsRequired = true,
         };
 
+    private static Option<int> DurationOption { get; } =
+        new(["--duration", "-d"], "The number of milliseconds for which the value should be set.")
+        {
+            IsRequired = false,
+        };
+
     /// <summary>
     /// Initializes a new instance of the <see cref="GpioSetCommand"/> class.
     /// </summary>
@@ -33,7 +39,8 @@ internal sealed class GpioSetCommand : Command<GpioSetCommand.Options, GpioSetCo
         : base("set", "Writes to a GPIO pin.")
     {
         Add(PinOption);
-        AddOption(ValueOption);
+        Add(ValueOption);
+        Add(DurationOption);
     }
 
     /// <summary>
@@ -50,6 +57,11 @@ internal sealed class GpioSetCommand : Command<GpioSetCommand.Options, GpioSetCo
         /// Gets the value to write.
         /// </summary>
         public PinWriteValue Value { get; init; }
+
+        /// <summary>
+        /// Gets the number of milliseconds for which the value should be set.
+        /// </summary>
+        public int? Duration { get; init; }
     }
 
     /// <summary>
@@ -69,6 +81,13 @@ internal sealed class GpioSetCommand : Command<GpioSetCommand.Options, GpioSetCo
             using GpioPin pin = controller.OpenPin(options.Pin, PinMode.Output);
             PinValue value = options.Value.ToPinValue();
             pin.Write(value);
+
+            if (options.Duration is not null)
+            {
+                console.WriteLine($"Waiting for {options.Duration} milliseconds...");
+                Thread.Sleep(options.Duration.Value);
+                pin.Write(options.Value.Invert().ToPinValue());
+            }
 
             return ExitCode.Success;
         }

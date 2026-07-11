@@ -13,6 +13,14 @@ internal static class PinWriteValueExtensions
 {
     extension(PinWriteValue value)
     {
+        public PinWriteValue Invert() =>
+            value switch
+            {
+                PinWriteValue.High => PinWriteValue.Low,
+                PinWriteValue.Low => PinWriteValue.High,
+                _ => throw new InvalidOperationException("Unrecognized pin write value.");
+            };
+
         public PinValue ToPinValue() =>
             value switch
             {
