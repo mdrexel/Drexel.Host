@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using Drexel.Host.Commands.Gpio.Get;
+using Drexel.Host.Commands.Gpio.Set;
 
 namespace Drexel.Host.Commands.Gpio
 {
@@ -15,6 +16,7 @@ namespace Drexel.Host.Commands.Gpio
             : base("gpio", "GPIO-related actions.")
         {
             this.Add(new GpioGetCommand());
+            this.Add(new GpioSetCommand());
         }
     }
 }
