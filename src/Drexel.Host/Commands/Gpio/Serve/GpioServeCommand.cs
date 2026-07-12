@@ -53,7 +53,7 @@ internal sealed class GpioServeCommand : Command<GpioServeCommand.Options, GpioS
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            using GpioController controller = null!;
+            using GpioController controller = new();
             using HttpListener httpListener = new();
             httpListener.Prefixes.Add($"http://+:{options.Port}/");
 
