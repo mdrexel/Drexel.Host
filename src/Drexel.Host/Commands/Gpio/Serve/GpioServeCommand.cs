@@ -75,7 +75,7 @@ internal sealed class GpioServeCommand : Command<GpioServeCommand.Options, GpioS
                         () => HandleRequestAsync(controller, context, cancellationToken),
                         cancellationToken);
                 }
-                catch (HttpListenerException e) when (!httpListener.IsListening)
+                catch (Exception) when (cancellationToken.IsCancellationRequested)
                 {
                     // Ignore exceptions that occur when we're shutting down.
                 }
