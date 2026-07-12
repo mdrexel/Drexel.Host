@@ -65,7 +65,7 @@ internal sealed class GpioGetCommand : Command<GpioGetCommand.Options, GpioGetCo
             cancellationToken.ThrowIfCancellationRequested();
 
             using GpioController controller = new();
-            GpioPin pin = controller.OpenPin(options.Pin, options.Mode.ToPinMode());
+            using GpioPin pin = controller.OpenPin(options.Pin, options.Mode.ToPinMode());
             PinValue value = pin.Read();
             console.WriteLine(((int)value).ToString());
 

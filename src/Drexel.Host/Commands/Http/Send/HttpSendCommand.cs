@@ -102,6 +102,16 @@ internal sealed class HttpSendCommand : Command<HttpSendCommand.Options, HttpSen
             HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
+            console.WriteLine($"{(int)response.StatusCode} ({response.StatusCode})");
+            foreach (KeyValuePair<string, IEnumerable<string>> header in response.Headers)
+            {
+                foreach (string value in header.Value)
+                {
+                    console.WriteLine($"{header.Key}: {value}");
+                }
+            }
+
+            console.WriteLine();
             console.WriteLine(responseContent);
 
             return ExitCode.Success;

@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using Drexel.Host.Commands.Gpio.Get;
 using Drexel.Host.Commands.Gpio.Query;
+using Drexel.Host.Commands.Gpio.Serve;
 using Drexel.Host.Commands.Gpio.Set;
 
 namespace Drexel.Host.Commands.Gpio;
@@ -16,8 +17,9 @@ public sealed class GpioRoot : Command
     public GpioRoot()
         : base("gpio", "GPIO-related actions.")
     {
-        this.Add(new GpioGetCommand());
-        this.Add(new GpioSetCommand());
-        this.Add(new GpioQueryCommand());
+        Add(new GpioGetCommand());
+        Add(new GpioSetCommand());
+        Add(new GpioQueryCommand());
+        Add(new GpioServeCommand());
     }
 }
