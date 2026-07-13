@@ -162,7 +162,13 @@ internal sealed class GpioServeCommand : Command<GpioServeCommand.Options, GpioS
 
                 using GpioPin gpio = context.Controller.OpenPin(pin, mode);
                 PinValue value = gpio.Read();
-                string result = value.ToString();
+                string result =
+                    value switch
+                    {
+                        var x when x == PinValue.High => "High",
+                        var x when x == PinValue.Low => "Low",
+                        _ => throw new NotImplementedException($"The pin value returned by the GPIO controller was not recognized. Value: {value.ToString()}"),
+                    };
 
                 context.Response.StatusCode = (int)HttpStatusCode.OK;
                 context.Response.SendChunked = true;
@@ -266,11 +272,11 @@ internal sealed class GpioServeCommand : Command<GpioServeCommand.Options, GpioS
 
                 try
                 {
-                    if ("HIGH".Equals(rawMode))
+                    if ("HIGH".Equals(rawMode, StringComparison.OrdinalIgnoreCase))
                     {
                         return (PinValue.High, PinValue.Low);
                     }
-                    else if ("LOW".Equals(rawMode))
+                    else if ("LOW".Equals(rawMode, StringComparison.OrdinalIgnoreCase))
                     {
                         return (PinValue.Low, PinValue.High);
                     }
