@@ -139,7 +139,7 @@ internal sealed class GpioServeCommand : Command<GpioServeCommand.Options, GpioS
             finally
             {
                 context.Response.Close();
-                console.WriteLine($"[{traceId}] Completed request");
+                console.WriteLine($"[{traceId}] Completed request ({context.Response.StatusCode})");
             }
         }
 
